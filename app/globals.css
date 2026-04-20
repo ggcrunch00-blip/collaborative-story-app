@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Ink neutrals */
+    --ink-900: #1C1A17; --ink-700: #3D3630; --ink-500: #6B615A;
+    --ink-300: #A79E95; --ink-200: #D6CFC5; --ink-100: #EAE4DA;
+
+    /* Paper */
+    --paper-0: #FFFFFF; --paper-50: #FBF7EF;
+    --paper-100: #F5EEDF; --paper-200: #EDE3CE;
+
+    /* Crayon (brand) */
+    --crayon-50: #EAF2FE; --crayon-100: #CFE0FC; --crayon-200: #A6C4F8;
+    --crayon-300: #6FA1F2; --crayon-400: #3B82F6; --crayon-500: #2568D6;
+    --crayon-600: #1A52B0; --crayon-700: #123E87;
+
+    /* Sprout / Sun / Berry / Plum */
+    --sprout-50: #E6F5EE; --sprout-100: #C2E6D2; --sprout-300: #5FC394;
+    --sprout-500: #10B981; --sprout-700: #0A7A56;
+    --sun-50: #FEF3DD; --sun-100: #FCE4B0; --sun-300: #F8C25E;
+    --sun-500: #F59E0B; --sun-700: #B67307;
+    --berry-50: #FDE7E7; --berry-100: #FBC5C5; --berry-300: #F58686;
+    --berry-500: #EF4444; --berry-700: #B42828;
+    --plum-50: #F6EDF6; --plum-300: #C590C5; --plum-500: #8E4C8E; --plum-700: #5E2D5E;
+
+    /* Semantic surfaces */
+    --bg-app:       var(--paper-50);
+    --bg-surface:   var(--paper-100);
+    --bg-surface-2: var(--paper-200);
+    --bg-overlay:   rgba(28, 26, 23, 0.48);
+    --bg-inverse:   var(--ink-900);
+
+    /* Foregrounds */
+    --fg-1: var(--ink-900); --fg-2: var(--ink-700); --fg-3: var(--ink-500);
+    --fg-disabled: var(--ink-300); --fg-on-brand: #FFFFFF; --fg-on-dark: var(--paper-50);
+
+    /* Borders */
+    --border-subtle:  var(--ink-100);
+    --border-default: var(--ink-200);
+    --border-strong:  var(--ink-500);
+
+    /* Brand */
+    --brand:         var(--crayon-500);
+    --brand-hover:   var(--crayon-600);
+    --brand-pressed: var(--crayon-700);
+    --brand-soft:    var(--crayon-50);
+    --brand-soft-border: var(--crayon-100);
+
+    /* Status */
+    --success: var(--sprout-500); --success-soft: var(--sprout-50);
+    --warning: var(--sun-500);    --warning-soft: var(--sun-50);
+    --danger:  var(--berry-500);  --danger-soft:  var(--berry-50);
+
+    /* Phase */
+    --phase-waiting: var(--ink-500);
+    --phase-reading: var(--plum-500);
+    --phase-writing: var(--crayon-500);
+    --phase-done:    var(--sprout-500);
+
+    /* Fonts */
+    --font-sans:    'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+    --font-display: 'Gaegu', 'Noto Sans KR', sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Shadows */
+    --shadow-sm:    0 1px 2px rgba(61,54,48,.06), 0 1px 1px rgba(61,54,48,.04);
+    --shadow-md:    0 2px 4px rgba(61,54,48,.06), 0 6px 16px rgba(61,54,48,.08);
+    --shadow-lg:    0 4px 8px rgba(61,54,48,.08), 0 16px 40px rgba(61,54,48,.10);
+    --shadow-focus: 0 0 0 4px rgba(37,104,214,.25);
+    --shadow-inset: inset 0 1px 2px rgba(61,54,48,.08);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    color: var(--fg-1);
+    background: var(--bg-app);
+  }
+  body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  :lang(ko) {
+    word-break: keep-all;
+  }
+}
+
+@keyframes pulse-strong { 0%,100% { opacity: 1 } 50% { opacity: .6 } }
+@keyframes wait-dot     { 0%,100% { opacity: .3; transform: scale(1) } 50% { opacity: 1; transform: scale(1.4) } }
+
+/* ── Badge / Dot ──────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.b-waiting { background: var(--paper-200); color: var(--ink-700); }
+.b-reading  { background: var(--plum-50);  color: var(--plum-700); }
+.b-writing  { background: var(--crayon-50); color: var(--crayon-700); }
+.b-done     { background: var(--sprout-50); color: var(--sprout-700); }
+.b-offline  { background: var(--berry-50); color: var(--berry-700); }
+
+/* ── Field label / hint ───────────────────────────────── */
+.field label {
+  display: block;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--fg-2);
+  margin-bottom: 6px;
+}
+.hint {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-top: 6px;
+}
+
+/* ── Phase Banner ─────────────────────────────────────── */
+.phase-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.phase-banner.read {
+  background: var(--plum-50);
+  color: var(--plum-700);
+}
+.phase-banner.write {
+  background: var(--brand-soft);
+  color: var(--crayon-700);
+}
+
+/* ── Timer Banner ─────────────────────────────────────── */
+.timer-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.timer-banner .bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(28,26,23,.10);
+  overflow: hidden;
+}
+.timer-banner .bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s linear;
+}
+.timer-banner.ok  { background: var(--brand-soft);  color: var(--crayon-700); }
+.timer-banner.ok  .bar-fill { background: var(--brand); }
+.timer-banner.warn  { background: var(--sun-50);    color: var(--sun-700); }
+.timer-banner.warn  .bar-fill { background: var(--warning); }
+.timer-banner.danger { background: var(--berry-50); color: var(--berry-700); animation: pulse-strong 1s ease-in-out infinite; }
+.timer-banner.danger .bar-fill { background: var(--danger); }
+.timer-banner .t-label { font-size: 12px; white-space: nowrap; }
+.timer-banner .t-time  { font-family: var(--font-mono); font-weight: 700; font-size: 18px; white-space: nowrap; }
+
+/* ── Lock Panel ───────────────────────────────────────── */
+.lock-panel {
+  background: var(--plum-50);
+  border: 1.5px dashed var(--plum-300);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.lock-panel .lp-icon  { font-size: 32px; }
+.lock-panel .lp-big   { font-family: var(--font-display); font-weight: 700; font-size: 48px; color: var(--plum-700); line-height: 1; }
+.lock-panel .lp-title { font-weight: 700; font-size: 16px; color: var(--plum-700); }
+.lock-panel .lp-hint  { font-size: 13px; color: var(--fg-3); }
+
+/* ── Prev Chunk ───────────────────────────────────────── */
+.prev-chunk {
+  background: var(--paper-100);
+  border-radius: 12px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--brand);
+}
+.prev-chunk .cap    { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); margin-bottom: 8px; }
+.prev-chunk .ptxt   { font-size: 16px; line-height: 1.7; color: var(--fg-1); white-space: pre-wrap; }
+.prev-chunk .author { font-family: var(--font-display); font-size: 15px; color: var(--brand); text-align: right; margin-top: 8px; }
+
+/* ── Story Chunk (done screen) ────────────────────────── */
+.story-chunk {
+  background: var(--paper-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.story-chunk.mine {
+  background: var(--sun-50);
+  border-color: var(--sun-100);
+}
+.story-chunk .idx    { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); margin-bottom: 6px; }
+.story-chunk .stxt   { font-size: 16px; line-height: 1.7; color: var(--fg-1); white-space: pre-wrap; }
+.story-chunk .author { font-family: var(--font-display); font-size: 15px; color: var(--brand); text-align: right; margin-top: 8px; }
+
+/* ── Attendee Chips (waiting) ─────────────────────────── */
+.att-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--paper-100);
+  color: var(--fg-2);
+}
+.att-chip.me {
+  background: var(--brand-soft);
+  color: var(--crayon-700);
+}
+.att-chip .ad {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sprout-500);
+  display: inline-block;
+}
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sun-500);
+  animation: wait-dot 1.2s ease-in-out infinite;
+}
+
+/* ── Notif (도움 요청) ────────────────────────────────── */
+.notif {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--sun-50);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.notif .hand   { font-size: 16px; flex-shrink: 0; }
+.notif strong  { color: var(--sun-700); font-weight: 700; }
+.notif span    { color: var(--fg-2); font-size: 13px; margin-left: 4px; }
+
+/* ── Export Grid ──────────────────────────────────────── */
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.export-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--paper-0);
+  border: 1.5px solid var(--border-default);
+  border-radius: 10px;
+  padding: 10px 4px;
+  cursor: pointer;
+  transition: background 120ms;
+  min-height: 56px;
+}
+.export-btn:hover { background: var(--paper-100); }
+.export-btn b    { font-family: var(--font-mono); font-size: 12px; color: var(--fg-1); }
+.export-btn span { font-size: 11px; color: var(--fg-3); }

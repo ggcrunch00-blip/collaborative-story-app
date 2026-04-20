@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="이어쓰기 mark">
+  
+  <rect x="4" y="4" width="88" height="88" rx="20" fill="#FBF7EF" stroke="#EAE4DA" stroke-width="1.5"></rect>
+  
+  <path d="M 14 62 Q 30 48 44 58 T 74 54" stroke="#2568D6" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  
+  <path d="M 74 54 Q 82 52 88 50" stroke="#2568D6" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="2 6"></path>
+  
+  <g transform="translate(60 36) rotate(28)">
+    <rect x="0" y="0" width="28" height="10" rx="2" fill="#F59E0B"></rect>
+    <polygon points="28,0 36,5 28,10" fill="#1C1A17"></polygon>
+    <rect x="0" y="0" width="4" height="10" fill="#EF4444"></rect>
+  </g>
+</svg>

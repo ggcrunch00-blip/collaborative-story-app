@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img" aria-label="Story seed card pattern">
+  
+  <defs>
+    <pattern id="dots" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#D6CFC5"></circle>
+    </pattern>
+  </defs>
+  <rect width="200" height="140" fill="#FBF7EF"></rect>
+  <rect width="200" height="140" fill="url(#dots)"></rect>
+</svg>

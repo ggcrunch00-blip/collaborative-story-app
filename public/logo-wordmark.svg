@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-label="이어쓰기">
+  
+  <text class="wm" x="12" y="72">이어쓰기</text>
+  <path class="underline" d="M 18 86 Q 90 80 180 86 T 340 84"></path>
+  <circle class="dot" cx="332" cy="22" r="8"></circle>
+</svg>
