@@ -60,10 +60,7 @@
     --phase-writing: var(--crayon-500);
     --phase-done:    var(--sprout-500);
 
-    /* Fonts */
-    --font-sans:    'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', sans-serif;
-    --font-display: 'Gaegu', 'Noto Sans KR', sans-serif;
-    --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* Fonts — injected as CSS variables by next/font via html className */
 
     /* Shadows */
     --shadow-sm:    0 1px 2px rgba(61,54,48,.06), 0 1px 1px rgba(61,54,48,.04);

@@ -15,5 +15,7 @@ const animals = [
 export function generateRandomNickname(): string {
   const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
   const animal = animals[Math.floor(Math.random() * animals.length)]
-  return `${adj} ${animal}`
+  return `${adj}${animal}`
 }
+
+export { generateRandomNickname as randomNickname }

@@ -5,6 +5,7 @@ export interface RoomSettings {
   timerSeconds: number
   readingSeconds: number
   seedCards: string[]
+  allowRevision: boolean
 }
 
 export interface Student {
@@ -13,6 +14,7 @@ export interface Student {
   isOnline: boolean
   status: 'idle' | 'reading' | 'writing' | 'done'
   charCount: number
+  needsHelp?: boolean
 }
 
 export interface StoryChunk {

@@ -142,7 +142,6 @@ function initSocketServer(httpServer) {
         return
       }
 
-      room.phase = 'reading'
       room.currentStep = 1
 
       // Create stories, one per student
@@ -153,39 +152,23 @@ function initSocketServer(httpServer) {
           chunks: [],
         }
         student.assignedStoryId = story.id
-        student.status = 'reading'
         return story
       })
 
+      // Step 1: skip reading phase (no previous story exists)
+      room.phase = 'writing'
+      room.students.forEach(s => { if (s.isOnline) s.status = 'writing' })
       io.to(room.roomCode).emit('room_state', room)
       room.students.forEach(student => {
         const studentSocket = io.sockets.sockets.get(student.id)
         if (studentSocket) {
           studentSocket.emit('phase_changed', {
-            phase: 'reading',
+            phase: 'writing',
             currentStep: 1,
             assignedStoryId: student.assignedStoryId,
           })
         }
       })
-
-      // Auto-transition to writing after readingSeconds
-      setTimeout(() => {
-        if (!rooms.has(room.roomCode)) return
-        room.phase = 'writing'
-        room.students.forEach(s => { if (s.isOnline) s.status = 'writing' })
-        io.to(room.roomCode).emit('room_state', room)
-        room.students.forEach(student => {
-          const studentSocket = io.sockets.sockets.get(student.id)
-          if (studentSocket) {
-            studentSocket.emit('phase_changed', {
-              phase: 'writing',
-              currentStep: room.currentStep,
-              assignedStoryId: student.assignedStoryId,
-            })
-          }
-        })
-      }, room.settings.readingSeconds * 1000)
     })
 
     socket.on('next_phase', () => {
@@ -218,6 +201,10 @@ function initSocketServer(httpServer) {
       room.phase = 'reading'
       room.students.forEach(s => { if (s.isOnline) s.status = 'reading' })
 
+      // Progressive reading time: base + (step-1) * 10 seconds
+      const readingMs = (room.settings.readingSeconds + (room.currentStep - 1) * 10) * 1000
+      room.currentReadingSeconds = Math.round(readingMs / 1000)
+
       io.to(room.roomCode).emit('room_state', room)
       room.students.forEach(student => {
         const studentSocket = io.sockets.sockets.get(student.id)
@@ -234,6 +221,7 @@ function initSocketServer(httpServer) {
         if (!rooms.has(room.roomCode)) return
         if (room.phase !== 'reading') return
         room.phase = 'writing'
+        room.currentReadingSeconds = null
         room.students.forEach(s => { if (s.isOnline) s.status = 'writing' })
         io.to(room.roomCode).emit('room_state', room)
         room.students.forEach(student => {
@@ -246,7 +234,25 @@ function initSocketServer(httpServer) {
             })
           }
         })
-      }, room.settings.readingSeconds * 1000)
+      }, readingMs)
+    })
+
+    socket.on('help_raise', () => {
+      const room = rooms.get(socket.roomCode)
+      if (!room) return
+      const student = room.students.find(s => s.id === socket.id)
+      if (!student) return
+      student.needsHelp = true
+      io.to(room.roomCode).emit('room_state', room)
+    })
+
+    socket.on('help_resolve', ({ studentId }) => {
+      const room = rooms.get(socket.roomCode)
+      if (!room || room.hostId !== socket.id) return
+      const student = room.students.find(s => s.id === studentId)
+      if (!student) return
+      student.needsHelp = false
+      io.to(room.roomCode).emit('room_state', room)
     })
 
     socket.on('submit_chunk', ({ storyId, content }) => {
@@ -256,6 +262,15 @@ function initSocketServer(httpServer) {
       if (!story) return
       const student = room.students.find(s => s.id === socket.id)
       if (!student) return
+
+      // Block re-submission if allowRevision is disabled
+      if (!room.settings.allowRevision && student.status === 'done') return
+
+      // If revision is allowed, replace existing chunk authored by this student
+      if (room.settings.allowRevision && student.status === 'done') {
+        const idx = story.chunks.findIndex(c => c.authorId === socket.id)
+        if (idx !== -1) story.chunks.splice(idx, 1)
+      }
 
       story.chunks.push({
         authorId: socket.id,

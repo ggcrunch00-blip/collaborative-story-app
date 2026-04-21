@@ -3,25 +3,52 @@
 ## 프로젝트 개요
 초등학교 협력 창작 활동 앱. 교사가 방을 만들고 학생들이 이야기를 돌아가며 이어씁니다.
 
-- **기술 스택**: Next.js 14 (App Router) + TypeScript + Socket.io + Tailwind CSS + Zustand
+- **기술 스택**: Next.js 14 (App Router) + TypeScript + Socket.io + Tailwind CSS + Zustand + Zod + react-hook-form
 - **실행**: `npm run dev` → http://localhost:3000
+- **디자인**: 핸드오프 적용 완료 (`C:\Users\dlgks\Downloads\_ Design System\design_handoff_ieoseugi_design_system`)
+
+---
+
+## 디자인 시스템
+
+모든 컴포넌트는 핸드오프 스펙 기반으로 재작성됨. **인라인 style={{}} 절대 사용 금지.**
+
+- 색상: `bg-brand`, `text-fg-1`, `bg-paper-0` 등 CSS 변수 기반 Tailwind 토큰 사용
+- 버튼: `components/ui/button.tsx` (Button 컴포넌트) 사용
+- 인풋: `components/ui/input.tsx`, `components/ui/textarea.tsx`
+- 뱃지: `components/ui/badge.tsx` (phase variant 포함)
+- 카드: `components/ui/card.tsx`
+- 앱바: `components/AppBar.tsx`
 
 ---
 
 ## 현재 작업 상태
 
-### 완료된 작업 (Phase 1 전체)
-- [x] 프로젝트 초기화 및 디렉토리 구조
-- [x] Socket.io 서버 (`server/server.js`)
-- [x] 교사 방 생성 화면 (`app/teacher/create/`)
+### 완료 (Phase 1 — 핸드오프 재작성)
+- [x] 디자인 토큰 (tailwind.config.js + globals.css)
+- [x] UI 기본 컴포넌트 (Button, Input, Textarea, Badge, Card)
+- [x] 홈 페이지 (`app/page.tsx`)
+- [x] 교사 방 생성 (`app/teacher/create/`)
 - [x] 교사 대시보드 (`app/teacher/room/[roomCode]/`)
-- [x] 학생 접속 화면 (`app/student/join/`)
-- [x] 학생 작성 화면 (`app/student/room/[roomCode]/`)
-- [x] 파일 저장 기능 (`components/student/ExportButtons.tsx`)
+- [x] 학생 입장 (`app/student/join/`)
+- [x] 학생 방 (대기/읽기/작성/완료) (`app/student/room/[roomCode]/`)
+
+### 완료 (Phase 1.5 — 버그픽스 + 기능 추가)
+- [x] 홈 화면 비주얼 개선 (장식, 마스코트 애니메이션, 카드 컨테이너)
+- [x] Gaegu 폰트 적용 수정 (globals.css 하드코딩 제거 → next/font 우선)
+- [x] 1라운드 읽기 단계 스킵 (서버: start_activity 바로 writing으로)
+- [x] 도움 요청 → 교사 대시보드 SOS 뱃지 표시 + 해제 기능
+- [x] QR 코드 생성 (교사 대시보드 QR 버튼, 방 생성 모달, qrcode.react)
+- [x] 이전 이야기 전체 히스토리 기본 펼침 (최신 1개 open, 이전 것 접힘)
+- [x] 읽기 시간 단계별 점진 증가 (base + step×10초)
+- [x] 이야기 제출 후 그림 그리기 캔버스 복원 (WaitingCanvas)
+- [x] QR 스캔 시 방 코드 자동 입력 (join 페이지 URL query param)
+- [x] 교사 설정: 이전 단계 다시 쓰기 허용 토글 (allowRevision)
+- [x] 작성 화면: 모든 이전 이야기 히스토리 표시 (이전 chunk 전체 목록)
 
 ### 미완료 (Phase 2~3)
 - [ ] Phase 2-1: 세션 복원 + 오프라인 대응
-- [ ] Phase 2-2: 교사 안전 도구 (덩어리 수정/삭제, 도움 요청)
+- [ ] Phase 2-2: 교사 안전 도구 (덩어리 수정/삭제, 미리보기)
 - [ ] Phase 2-3: 모둠별 이야기 순환
 - [ ] Phase 3-1: 낭독 모드 + 이야기 갤러리
 - [ ] Phase 3-2: 활동 리포트 CSV + AI 이미지 프롬프트
@@ -29,33 +56,31 @@
 
 ---
 
-## 핵심 미결 과제: 디자인 핸드오프 적용
+## 폴더 구조
 
-### 문제
-Claude Code로 기능 구현 → Claude Design으로 디자인 → 핸드오프를 나중에 적용했더니 Claude Code 기본 디자인이 우선 적용됨.
+```
+app/
+├── layout.tsx              ← 폰트 (Noto Sans KR, Gaegu, JetBrains Mono)
+├── globals.css             ← CSS 변수 전체 정의
+├── page.tsx                ← 홈 (선생님/학생 선택)
+├── teacher/create/         ← 방 만들기 (react-hook-form + zod)
+└── teacher/room/[roomCode] ← 대시보드
 
-### 해결 방향 (둘 중 선택)
-**A) 현재 앱에 핸드오프 적용** (권장)
-- Claude Design 핸드오프 파일을 받아서 기존 컴포넌트에 덮어 적용
-- globals.css / tailwind.config.js / 각 컴포넌트의 className 교체
-- `_prompts/` 폴더에 있는 원본 프롬프트 참고
+components/
+├── ui/                     ← Button, Input, Textarea, Badge, Card
+├── AppBar.tsx
+└── StudentStatusCard.tsx
 
-**B) 처음부터 재시작**
-- `_prompts/story-app-claude-code-prompt.md`의 Phase 1 프롬프트들을 순서대로 실행
-- 단, 시작 전에 Claude Design 핸드오프를 먼저 제공한 뒤 스타일 가이드로 삼아 구현
+lib/
+├── socket.ts               ← Socket.io 싱글턴
+├── store.ts                ← Zustand 상태
+├── types.ts                ← 공통 타입
+├── schemas.ts              ← Zod 스키마
+├── phase.ts                ← 페이즈 메타
+├── nicknames.ts            ← 랜덤 닉네임
+└── utils.ts                ← cn() 유틸
 
-### 디자인 가이드라인 (원본 프롬프트 기준)
-- 주 색상: 파란색 `#3B82F6` / 보조: 초록 `#10B981` / 경고: 주황 `#F59E0B` / 오류: 빨강 `#EF4444`
-- 폰트: Noto Sans KR (Google Fonts)
-- 대상: 초등학생 → 큰 버튼, 명확한 레이블, 직관적 UI
-- 반응형: 모바일 390px / 태블릿 768px / 데스크탑 1280px
-
----
-
-## 다음 작업 시작 방법
-
-1. **Claude Design 핸드오프 파일**을 먼저 공유해주세요
-2. 핸드오프의 색상/타이포/컴포넌트 스펙을 확인한 뒤
-3. "현재 앱에 적용(A)" 또는 "재시작(B)" 중 방향을 결정
-
-전체 기능 프롬프트는 `_prompts/story-app-claude-code-prompt.md` 참고.
+server/
+└── socketServer.js         ← Socket.io 서버 로직
+server.js                   ← Next.js + Socket.io 통합 서버
+```

@@ -47,9 +47,10 @@ module.exports = {
         paper:  { 0:'#FFFFFF',50:'#FBF7EF',100:'#F5EEDF',200:'#EDE3CE' },
       },
       borderColor: {
-        subtle:  'var(--border-subtle)',
-        DEFAULT: 'var(--border-default)',
-        strong:  'var(--border-strong)',
+        subtle:   'var(--border-subtle)',
+        DEFAULT:  'var(--border-default)',
+        default:  'var(--border-default)',
+        strong:   'var(--border-strong)',
       },
       fontFamily: {
         sans:    ['var(--font-sans)',    'sans-serif'],
